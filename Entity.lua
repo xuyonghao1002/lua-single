@@ -1,0 +1,8 @@
+
+
+
+local AvatarEntity = {}
+
+
+
+return AvatarEntity

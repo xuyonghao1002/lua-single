@@ -1,0 +1,12 @@
+{
+    "configurations": [
+    {
+        "arg": [],
+        "name": "launch",
+        "program": "${workspaceFolder}/main.lua",
+        "request": "launch",
+        "stopOnEntry": true,
+        "type": "lua"
+    }
+    ]
+}
