@@ -1,7 +1,9 @@
 
+local Avatar = require "Entity.Avatar"
+local TypeMgr = require "Entity.TypeMgr"
 
 local function main()
-    print(1234)
+
 end
 
 
