@@ -32,7 +32,7 @@ local Prop = class()
 	end
 
 	function Prop:ParseType(type_str)
-		self.type = RpcUtils.GetType(type_str)
+		self.type = RpcUtils.GetClass(type_str)
 	end
 
 	function Prop:ParseOptions(options)

@@ -6,7 +6,7 @@ local RpcUtils = {}
 
 CustomTypeMap = {}
 
-function RpcUtils.GetType(type_str)
+function RpcUtils.GetClass(type_str)
 	if CustomTypeMap[type_str] ~= nil then
 		return CustomTypeMap[type_str]
 	end
@@ -70,7 +70,7 @@ end
 
 function RpcUtils.LoadArg(Arg)
 	if type(Arg) == "table" and Arg.__type and Arg.value then
-		local Type = RpcUtils.GetType(Arg.__type)
+		local Type = RpcUtils.GetClass(Arg.__type)
 		if Type then
 			return Type.convert(Type, Arg.value)
 		end

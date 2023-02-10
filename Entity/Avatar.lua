@@ -1,19 +1,17 @@
+local Class = require "Utils.Class".Class
+local AvatarEntity = require "Entity.Entity".AvatarEntity
 
--- local AvatarAttr = require "AvatarAtrr"
-local TypeMgr = require "Entity.TypeMgr"
+local Avatar = Class("Avatar", AvatarEntity)
 
-local Avatar = {}
-
--- Avatar._implement = "BluePrints.Client.Implements.Avatar"
-
--- Avatar.__classname = "Avatar"
-
-function Avatar:test()
-    print("Avatar test")
+function Avatar:__init__(EntityId)
+    self:Super().__init__(self, EntityId)
 end
 
--- Avatar:AssembleComponents()
--- Avatar:FormatProperties()
+function Avatar:OnBecomePlayer()
+    self:Super().OnBecomePlayer(self)
+    print("Avatar OnBecomePlayer", self.Count)
+end
 
-TypeMgr:RegisterType("Avatar", Avatar)
+
+
 return Avatar
