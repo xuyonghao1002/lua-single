@@ -1,8 +1,8 @@
 
 local function AssembleComponents(M, _components, for_reload)
 	local NameToFuncTable = {}
-	for name, value in pairs(M) do
-		if type(value) == "function" and string.sub(name, 1,2) ~= "__" then
+	for name, value in pairs(M.__Dict__) do
+		if type(value) == "function" then
 			if NameToFuncTable[name] == nil then
 				NameToFuncTable[name] = {}
 			end
@@ -14,7 +14,7 @@ local function AssembleComponents(M, _components, for_reload)
 	if _components then
 		components = _components
 	else
-		components = rawget(M, "_components")
+		components = rawget(M, "__Component__")
 	end
 	if type(components) == "table" then
 		for _, component_name in ipairs(components) do
@@ -23,27 +23,28 @@ local function AssembleComponents(M, _components, for_reload)
 			end
 			local component = require(component_name)
 			for name, value in pairs(component) do
-				if type(value) == "function" and string.sub(name, 1,2) ~= "__" then
+				if type(value) == "function" then
 					if NameToFuncTable[name] == nil then
 						NameToFuncTable[name] = {}
 					end
 					table.insert(NameToFuncTable[name], value)
 				end
 			end
-
 		end
 	end
 
 	for name, func_t in pairs(NameToFuncTable) do
 		if #func_t == 1 then
-			rawset(M, name, func_t[1])
+			-- rawset(M, name, func_t[1])
+			M[name] = func_t[1]
 		else
-			function _wrapper(...)
+			local function wrapper(...)
 				for _, func in ipairs(func_t) do
 					func(...)
 				end
 			end
-			rawset(M, name, _wrapper)
+			-- rawset(M, name, _wrapper)
+			M[name] = wrapper
 		end
 	end
 end

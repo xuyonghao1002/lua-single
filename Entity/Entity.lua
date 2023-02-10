@@ -4,7 +4,7 @@ local Entity = {}
 
 local AvatarEntity = Class("AvatarEntity")
 
-function AvatarEntity:__init__(EntityId)
+function AvatarEntity:Init(EntityId)
     self.EntityId = EntityId
     self.CallbackFuncs = {}
 end

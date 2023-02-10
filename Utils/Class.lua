@@ -8,8 +8,8 @@ local ClassModule = {}
 
 
 local function Deque()
-	local self = { }
-	self._Items = { }
+	local self = {}
+	self._Items = {}
 	self._Front = 0
 	self._Back = 0
 	function self:PushFront(Item)
@@ -152,7 +152,6 @@ end
 --------------------------------------------------------------------------------
 -- Class metatable
 --------------------------------------------------------------------------------
-
 function ClassMeta:__call(...)
 	local obj = {
 		__Name__ = self.__Name__,
@@ -161,8 +160,8 @@ function ClassMeta:__call(...)
 		__Dict__ = {},
 	}
 	setmetatable(obj, InstanceMeta)
-	if GetAttr(obj, '__init__') then
-		GetAttr(obj, '__init__')(obj, ...)
+	if GetAttr(obj, 'Init') then
+		GetAttr(obj, 'Init')(obj, ...)
 	end
 	return obj
 end
@@ -170,6 +169,10 @@ function ClassMeta:__index(key)
 	return Resolve(self, key)
 end
 function ClassMeta:__newindex(key, value)
+	if string.sub(key, 1, 2) == "__" and string.sub(key, -2, -1) == "__" then
+		rawset(self, key, value)
+		return
+	end
 	self.__Dict__[key] = value
 end
 

@@ -1,10 +1,15 @@
 local Class = require "Utils.Class".Class
 local AvatarEntity = require "Entity.Entity".AvatarEntity
+local AssembleComponents = require "Utils.Assemble".AssembleComponents
 
 local Avatar = Class("Avatar", AvatarEntity)
 
-function Avatar:__init__(EntityId)
-    self:Super().__init__(self, EntityId)
+Avatar.__Component__ = {
+    "Entity.Components.CharMgr"
+}
+
+function Avatar:Init(EntityId)
+    self:Super().Init(self, EntityId)
 end
 
 function Avatar:OnBecomePlayer()
@@ -12,6 +17,9 @@ function Avatar:OnBecomePlayer()
     print("Avatar OnBecomePlayer", self.Count)
 end
 
+function Avatar:EnterWorld()
+    print("Avatar EnterWorld")
+end
 
-
+AssembleComponents(Avatar)
 return Avatar

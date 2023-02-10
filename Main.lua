@@ -5,6 +5,7 @@ local AvatarEntity = require "Entity.Entity".AvatarEntity
 local Avatar = require "Entity.Avatar"
 
 
+
 local function main()
 
     PrintTable(ClassModule.Object, 10, "Object")
@@ -14,6 +15,7 @@ local function main()
     local avatar = Avatar(12345)
     PrintTable(avatar, 10, "avatar")
 
+    avatar:EnterWorld()
 end
 
 
