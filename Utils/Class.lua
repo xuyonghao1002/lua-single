@@ -1,7 +1,6 @@
 local ClassMgr = require "Entity.ClassMgr"
 
 
-
 local ClassMeta = {}
 local InstanceMeta = {}
 local ClassModule = {}
@@ -124,6 +123,12 @@ local function Resolve(obj, key)
 end
 
 local function IsInstance(obj, class)
+	if not obj.__Class__ then
+		return false
+	end
+	if not obj.__Class__.__Mro__ then
+		return false
+	end
 	for _, c in ipairs(obj.__Class__.__Mro__) do
 		if c == class then
 			return true
@@ -181,9 +186,40 @@ end
 -- Instance metatable
 --------------------------------------------------------------------------------
 function InstanceMeta:__index(key)
-	return Resolve(self, key)
+	local result = nil
+	if self.__Dict__.Props then
+		result = self.__Dict__.Props[key]
+		if result then
+			return result
+		end
+	end
+	if self.__Class__.__Dict__.Props then
+		if not self.__Dict__.Props then
+			self.__Dict__.Props = {}
+		end
+		local attr = self.__Class__.__Dict__.Props[key]
+		if attr then
+			self.__Dict__.Props[key] = attr:GetDefault()
+			return self.__Dict__.Props[key]
+		end
+	end
+	result = Resolve(self, key)
+	if result then
+		return result
+	end
+	return nil
 end
 function InstanceMeta:__newindex(key, value)
+	if self.__Class__.__Dict__.Props then
+		if not self.__Dict__.Props then
+			self.__Dict__.Props = {}
+		end
+		local attr = self.__Class__.__Dict__.Props[key]
+		if attr then
+			self.__Dict__.Props[key] = attr:GetValue(value)
+			return
+		end
+	end
 	self.__Dict__[key] = value
 end
 

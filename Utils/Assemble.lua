@@ -93,7 +93,7 @@ local function FormatProperties(M)
 	local client_props = {}
 	local getters = {}
 
-	local implement_name = rawget(M, "_implement")
+	local implement_name = rawget(M, "__Props__")
 	local implement = nil
 	if type(implement_name) == "table" then
 		implement = implement_name
@@ -117,14 +117,10 @@ local function FormatProperties(M)
 		end
 	end
 
-	rawset(M, "Props", props)
-	rawset(M, "_SaveProps", save_props)
-	rawset(M, "_ClientProps", client_props)
-	rawset(M, "Getters", getters)
-
-	-- rawset(M, "_implement", nil)
-
-	setmetatable(M, PropMetaTable)
+	M["Props"] = props
+	M["SaveProps"] = save_props
+	M["ClientProps"] = client_props
+	M["Getters"] = getters
 end
 
 return {

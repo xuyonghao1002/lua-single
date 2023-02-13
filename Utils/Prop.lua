@@ -1,17 +1,9 @@
 local CommonUtils = require "Utils.CommonUtils"
-local RpcUtils = require "Utils.RpcUtils"
-local class = require "NetworkEngine.Class"
+local Class = require "Utils.Class".Class
+local IsInstance = require "Utils.Class".IsInstance
+local ClassMgr = require "Entity.ClassMgr"
 
-
-local Prop = class()
-
-	function Prop:New(type_str, options, default, ...)
-		local obj = self:_New()
-		if obj then
-			obj:Init(type_str, options, default, ...)
-		end
-		return obj
-	end
+local Prop = Class("Prop")
 
 	function Prop:Init(type_str, options, default, ...)
 		self.is_prop = true
@@ -19,27 +11,27 @@ local Prop = class()
 		if type(type_str) == "string" then
 			self.type_str = type_str
 			self:ParseType(type_str)
-		elseif type(type_str) == "table" then
-			self.type = type_str
 		end
 
 		self:ParseOptions(options)
 		if default then
-			self.value = CommonUtils.DeepCopy(default)
-		else
-			self.value = self.type:GetDefault()
+			self.default = default
 		end
 	end
 
 	function Prop:ParseType(type_str)
-		self.type = RpcUtils.GetClass(type_str)
+		local class = ClassMgr:GetType(type_str)
+		if class then
+			self.type = self.type_str
+			self.type_str = nil
+		end
 	end
 
 	function Prop:ParseOptions(options)
 		self.save = false
 		self.client = false
-		for k,v in pairs(CommonUtils.Split(options, " ")) do
-			rawset(self, v, true)
+		for k, v in pairs(CommonUtils.Split(options, " ")) do
+			self[v] = true
 		end
 	end
 
@@ -49,20 +41,25 @@ local Prop = class()
 		self.change_notifier = "_OnChange"..name
 	end
 
+	function Prop:GetDefault()
+		if self.default then
+			return self.default
+		end
+		local type = ClassMgr:GetType(self.type)
+		return type:GetDefault()
+	end
+
+	function Prop:GetValue(value)
+		local type = ClassMgr:GetType(self.type)
+		return type:convert(value)
+	end
+
 	function Prop:Set(value)
 		self.value = self.type.convert(self.type, value)
 	end
 
 
-local Getter = class()
-
-	function Getter:New(attr, name)
-		local obj = self:_New()
-		if obj then
-			obj:Init(attr, name)
-		end
-		return obj
-	end
+local Getter = Class("Getter")
 
 	function Getter:Init(attr, name)
 		self.is_getter = true
@@ -75,11 +72,11 @@ local Getter = class()
 local prop = {}
 
 	prop.prop = function(type_str, options, default)
-		return Prop:New(type_str, options, default)
+		return Prop(type_str, options, default)
 	end
 
 	prop.getter = function (attr, name)
-		return Getter:New(attr, name)
+		return Getter(attr, name)
 	end
 
 return prop

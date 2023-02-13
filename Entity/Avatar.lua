@@ -1,8 +1,11 @@
 local Class = require "Utils.Class".Class
 local AvatarEntity = require "Entity.Entity".AvatarEntity
 local AssembleComponents = require "Utils.Assemble".AssembleComponents
+local FormatProperties = require "Utils.Assemble".FormatProperties
 
 local Avatar = Class("Avatar", AvatarEntity)
+
+Avatar.__Props__= "Entity.AvatarAttr"
 
 Avatar.__Component__ = {
     "Entity.Components.CharMgr"
@@ -22,4 +25,5 @@ function Avatar:EnterWorld()
 end
 
 AssembleComponents(Avatar)
+FormatProperties(Avatar)
 return Avatar
