@@ -49,23 +49,27 @@ local Prop = Class("Prop")
 		return type:GetDefault()
 	end
 
-	function Prop:GetValue(value)
+	function Prop:GetTypeInstance(value)
+		-- 得到类型的实例 load
 		local type = ClassMgr:GetType(self.type)
 		return type:convert(value)
 	end
 
-	function Prop:Set(value)
-		self.value = self.type.convert(self.type, value)
+	function Prop:GetSaveDump(value)
+		local type = ClassMgr:GetType(self.type)
+		return type:save_dump(value)
 	end
 
-
-local Getter = Class("Getter")
-
-	function Getter:Init(attr, name)
-		self.is_getter = true
-		self.attr = attr
-		self.name = name
+	function Prop:GetClientDump(value)
+		local type = ClassMgr:GetType(self.type)
+		return type:client_dump(value)
 	end
+
+	function Prop:GetAllDump(value)
+		local type = ClassMgr:GetType(self.type)
+		return type:all_dump(value)
+	end
+
 
 
 
@@ -75,9 +79,6 @@ local prop = {}
 		return Prop(type_str, options, default)
 	end
 
-	prop.getter = function (attr, name)
-		return Getter(attr, name)
-	end
 
 return prop
 

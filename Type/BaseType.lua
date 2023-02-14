@@ -1,56 +1,62 @@
-local Class = require "Utils.Class".Class
+local ClassModule = require "Utils.Class"
+local Class = ClassModule.Class
+local IsClass = ClassModule.IsClass
 local CommonUtils = require "Utils.CommonUtils"
 
 
-local TypeBase = Class("TypeBase")
-	TypeBase.default = nil
-	TypeBase._owner = nil
-	TypeBase._attr_info = nil
-	TypeBase.IsCustomType = true
+local BaseType = Class("BaseType")
+	BaseType.default = nil
+	BaseType._owner = nil
+	BaseType._attr_info = nil
+	BaseType.IsCustomType = true
 
-	function TypeBase:GetDefault()
+	function BaseType:GetDefault()
 		return CommonUtils.DeepCopy(self.default)
 	end
 
-	function TypeBase:Init(...)
+	function BaseType:Init(...)
 	end
 
-	function TypeBase:_Init()
+	function BaseType:_Init(...)
 	end
 
-	function TypeBase:tostring(value)
+	function BaseType:tostring(value)
 		return tostring(value)
 	end
 
-	function TypeBase:convert(data)
+	function BaseType:GetTypeName()
+		return self.__Name__
+	end
+
+	function BaseType:convert(data)
 		if data == nil then
 			return data
 		end
 		return self:load(data)
 	end
 
-	function TypeBase:load(value)
+	function BaseType:load(value)
 		return value
 	end
 
-	function TypeBase:save_dump(value)
+	function BaseType:save_dump(value)
 		return value
 	end
 
-	function TypeBase:client_dump(value)
+	function BaseType:client_dump(value)
 		return value
 	end
 
-	function TypeBase:all_dump(value)
+	function BaseType:all_dump(value)
 		return value
 	end
 
-	function TypeBase:SetOwnerInfo(value, owner, attr)
+	function BaseType:SetOwnerInfo(value, owner, attr)
 	end
 
 
 
-local Int = Class("Int", TypeBase)
+local Int = Class("Int", BaseType)
 	Int.default = 0
 	function Int:load(value)
 		return math.ceil(tonumber(value))
@@ -58,7 +64,7 @@ local Int = Class("Int", TypeBase)
 
 
 local BaseTypes = {
-	TypeBase = TypeBase,
+	BaseType = BaseType,
 	Int = Int,
 }
 

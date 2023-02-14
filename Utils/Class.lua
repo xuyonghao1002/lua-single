@@ -3,6 +3,7 @@ local ClassMgr = require "Entity.ClassMgr"
 
 local ClassMeta = {}
 local InstanceMeta = {}
+local DictInstanceMeta = {}
 local ClassModule = {}
 
 
@@ -194,33 +195,40 @@ function InstanceMeta:__index(key)
 		end
 	end
 	if self.__Class__.__Dict__.Props then
-		if not self.__Dict__.Props then
-			self.__Dict__.Props = {}
-		end
-		local attr = self.__Class__.__Dict__.Props[key]
-		if attr then
-			self.__Dict__.Props[key] = attr:GetDefault()
+		local prop = self.__Class__.__Dict__.Props[key]
+		if prop then
+			if not self.__Dict__.Props then
+				self.__Dict__.Props = {}
+			end
+			self.__Dict__.Props[key] = prop:GetDefault()
 			return self.__Dict__.Props[key]
 		end
 	end
-	result = Resolve(self, key)
-	if result then
-		return result
-	end
-	return nil
+	return Resolve(self, key)
 end
 function InstanceMeta:__newindex(key, value)
 	if self.__Class__.__Dict__.Props then
-		if not self.__Dict__.Props then
-			self.__Dict__.Props = {}
-		end
-		local attr = self.__Class__.__Dict__.Props[key]
-		if attr then
-			self.__Dict__.Props[key] = attr:GetValue(value)
+		local prop = self.__Class__.__Dict__.Props[key]
+		if prop then
+			if not self.__Dict__.Props then
+				self.__Dict__.Props = {}
+			end
+			self.__Dict__.Props[key] = prop:GetTypeInstance(value)
 			return
 		end
 	end
 	self.__Dict__[key] = value
+end
+
+
+--------------------------------------------------------------------------------
+-- Instance metatable
+--------------------------------------------------------------------------------
+function DictInstanceMeta:__index(key)
+
+end
+function DictInstanceMeta:__newindex(key,  value)
+
 end
 
 
@@ -247,8 +255,9 @@ ClassModule.GetAttr = GetAttr
 ClassModule.SetAttr = SetAttr
 ClassModule.ClassName = ClassName
 ClassModule.Mro = Mro
--- ClassModule.ClassMeta = ClassMeta
--- ClassModule.InstanceMeta = InstanceMeta
+ClassModule.ClassMeta = ClassMeta
+ClassModule.InstanceMeta = InstanceMeta
+ClassModule.DictInstanceMeta = DictInstanceMeta
 ClassModule.Object = Object
 
 

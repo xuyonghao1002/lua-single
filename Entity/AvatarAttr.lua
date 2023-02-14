@@ -3,7 +3,11 @@ local prop = require "Utils.prop"
 
 
 local AvatarAttr = {
-	_id = prop.prop("Int", "client save"),
+	-- Id = prop.prop("Int", "client save"),
+	CurrentChar = prop.prop("Char.Char", "client save"),
+
+	Chars = prop.prop("Char.CharDict", "client save")
+
 	-- -- Eid
 	-- Eid = prop.prop("ObjId", "client save"),
 	-- -- 登录名
