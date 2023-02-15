@@ -50,7 +50,6 @@ local Prop = Class("Prop")
 	end
 
 	function Prop:GetTypeInstance(value)
-		-- 得到类型的实例 load
 		local type = ClassMgr:GetType(self.type)
 		return type:convert(value)
 	end

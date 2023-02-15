@@ -1,7 +1,7 @@
 local ClassModule = require "Utils.Class"
 local Class = ClassModule.Class
-local BaseTypes = require "Type.BaseType"
-local CustomTypes = require "Type.CustomType"
+local BaseTypes = require "Type.BaseTypes"
+local CustomTypes = require "Type.CustomTypes"
 local prop = require "Utils.Prop"
 local FormatProperties = require "Utils.Assemble".FormatProperties
 
@@ -23,8 +23,8 @@ local Char = Class("Char", CustomTypes.CustomAttr)
 		self.CharId = CharId
 	end
 
-    function Char:test()
-        print("Char test")
+    function Char:AddLevel()
+        print("Char AddLevel")
         self.Level = self.Level + 1
     end
 
@@ -34,6 +34,10 @@ local Char = Class("Char", CustomTypes.CustomAttr)
 local CharDict = Class("CharDict", CustomTypes.CustomDict)
 	CharDict.KeyType = BaseTypes.Int
 	CharDict.ValueType = Char
+
+	function CharDict:NewChar(CharId)
+		return Char(CharId)
+	end
 
 
 return {Char = Char, CharDict = CharDict}

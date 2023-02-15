@@ -2,8 +2,9 @@ require "Utils.Utils"
 require "Entity.ClassMgr"
 local ClassModule = require "Utils.Class"
 local AvatarEntity = require "Entity.Entity"
-
 local Avatar = require "Entity.Avatar"
+
+local Box = require "Type.RewardBox".RewardBox
 
 
 local function test_class()
@@ -16,9 +17,9 @@ local function test_load_dump()
     local avatar = Avatar(12345)
     avatar:EnterWorld()
     avatar.Id = 101
-    print("before", avatar.CurrentChar.Level)
-    avatar.CurrentChar:test()
-    print("after", avatar.CurrentChar.Level)
+    avatar.CurrentChar:AddLevel()
+    avatar.Chars[101] = avatar.Chars:NewChar(101)
+
     local save_attrs = avatar:GetSaveAttrs()
     PrintTable(save_attrs, 4, "save_attrs")
     local client_attrs = avatar:GetClientAttrs()
@@ -36,15 +37,19 @@ end
 
 local function test_dict()
     local avatar = Avatar(1)
-    print(avatar.Chars)
-    PrintTable(avatar.Chars, 10, "avatar")
+    avatar.Chars[101] = avatar.Chars:NewChar(101)
+    print(avatar.Chars[101].CharId)
+    PrintTable(avatar.Chars, 8, "avatar.Chars")
+    for key, value in pairs(avatar.Chars) do
+        print(key, value)
+    end
 end
 
 
 local function main()
-    -- test_load_dump()
+    test_load_dump()
 
-    test_dict()
+    -- test_dict()
 end
 
 

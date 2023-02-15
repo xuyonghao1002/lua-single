@@ -131,7 +131,7 @@ local function IsInstance(obj, class)
 		return false
 	end
 	for _, c in ipairs(obj.__Class__.__Mro__) do
-		if c == class then
+		if c == class.__Name__ then
 			return true
 		end
 	end
@@ -225,10 +225,25 @@ end
 -- Instance metatable
 --------------------------------------------------------------------------------
 function DictInstanceMeta:__index(key)
-
+	local result = nil
+	if self.__Dict__._inner then
+		result = self.__Dict__._inner[key]
+		if result then
+			return result
+		end
+	end
+	return Resolve(self, key)
 end
 function DictInstanceMeta:__newindex(key,  value)
-
+	local KeyType = self.KeyType
+	local ValueType = self.ValueType
+	self.__Dict__._inner[KeyType:convert(key)] = ValueType:convert(value)
+end
+local function DictNext(table, key)
+	return next(table._inner, key)
+end
+function DictInstanceMeta:__pairs(key)
+	return DictNext, self, key
 end
 
 

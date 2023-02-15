@@ -1,6 +1,7 @@
 local ClassModule = require "Utils.Class"
 local Class = ClassModule.Class
-local BaseType = require "Type.BaseType".BaseType
+local BaseTypes = require "Type.BaseTypes"
+local BaseType = BaseTypes.BaseType
 
 
 local CustomType = Class("CustomType", BaseType)
@@ -23,7 +24,6 @@ local CustomAttr = Class("CustomAttr", CustomType)
 		if ClassModule.IsInstance(data, type) then
 			return data
 		end
-
 		local object = type()
 		object.__Dict__.Props = {}
 		for key, value in pairs(data) do
@@ -102,15 +102,76 @@ local CustomDict = Class("CustomDict", CustomType)
 	CustomDict.KeyType = nil
 	CustomDict.ValueType = nil
 	function CustomDict:Init(inner, ...)
+		assert(BaseTypes[self.KeyType.__Name__])
 		self._inner = inner or {}
-
+		setmetatable(self, ClassModule.DictInstanceMeta)
 	end
 
+	function CustomDict:SetDefault(key, value)
+		key = self.KeyType:convert(key)
+		if self._inner[key] then
+			return self._inner[key]
+		end
+		self._inner[key] = self.ValueType:convert(value)
+	end
+
+	function CustomDict:load(data)
+		local type = ClassModule.IsClass(self) and self or self.__Class__
+		if ClassModule.IsInstance(data, type) then
+			return data
+		end
+		local items = {}
+		for key, value in pairs(data) do
+			items[type.KeyType:convert(key)] = type.ValueType:convert(value)
+		end
+		return type(items)
+	end
+
+	function CustomDict:save_dump(data)
+		if data == nil then
+			return data
+		end
+		local result = {}
+		local type = data.__Class__
+		for key, value in pairs(data) do
+			result[tostring(type.KeyType:save_dump(key))] = type.ValueType:save_dump(value)
+		end
+		return result
+	end
+
+	function CustomDict:client_dump(data)
+		if data == nil then
+			return data
+		end
+		local result = {}
+		local type = data.__Class__
+		for key, value in pairs(data) do
+			result[tostring(type.KeyType:client_dump(key))] = type.ValueType:client_dump(value)
+		end
+		return result
+	end
+
+	function CustomDict:all_dump(data)
+		if data == nil then
+			return data
+		end
+		local result = {}
+		local type = data.__Class__
+		for key, value in pairs(data) do
+			result[tostring(type.KeyType:all_dump(key))] = type.ValueType:all_dump(value)
+		end
+		return result
+	end
+
+local Int2IntDict = Class("Int2IntDict", CustomDict)
+	Int2IntDict.KeyType = BaseTypes.Int
+	Int2IntDict.ValueType = BaseTypes.Int
 
 
 local CustomTypes = {
 	CustomAttr = CustomAttr,
-	CustomDict = CustomDict
+	CustomDict = CustomDict,
+	Int2IntDict = Int2IntDict,
 }
 
 return CustomTypes

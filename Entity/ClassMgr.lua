@@ -19,7 +19,7 @@ function ClassMgr:GetType(Name)
 		return Types[Name]
 	end
 
-    local BaseTypes = require "Type.BaseType"
+    local BaseTypes = require "Type.BaseTypes"
     local CustomTypes = {}
 
 	if BaseTypes[Name] ~= nil then
