@@ -45,11 +45,41 @@ local function test_dict()
     end
 end
 
+local function test(a,b,c)
+    local ret = 1
+end
+
+local function getArgs(fun)
+    local args = {}
+
+    local hook = function (...)
+        local info = debug.getinfo(3)
+        if info.name ~= "pcall" then
+            return
+        end
+        for i = 1, math.huge do
+            local name, value = debug.getlocal(2, i)
+            if name == '(*temporary)' or not name then
+                debug.sethook()
+                error('')
+                return
+            end
+            args[i] = name
+        end
+    end
+
+    debug.sethook(hook, "c")
+    pcall(fun)
+
+    return table.unpack(args)
+end
 
 local function main()
-    test_load_dump()
-
+    -- test_load_dump()
     -- test_dict()
+    -- PrintTable(debug.getinfo(3), 10)
+
+    print(getArgs(test))
 end
 
 
